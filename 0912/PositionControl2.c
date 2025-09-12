@@ -1,6 +1,9 @@
  #include <stdio.h>
  #include <windows.h>
- void gotoxy(int x, int y);
+ void gotoxy(int x,int y){
+    COORD Pos={x-1,y-1};
+    SetConsoleCursorposition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
+}
  int main(void)
  {
  for(int i=1;i<=9;i++)
@@ -11,4 +14,5 @@
  printf("\n");
  return 0;
  }
+
  //3단 출력
