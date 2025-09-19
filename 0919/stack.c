@@ -28,7 +28,7 @@ int main(void) {
 
     } while (key != 27);
 
-    printf("\n\nData pop process\n\n");
+    printf("\n\na데이터 POP 과정\n\n");
 
     while (top != NULL) {
         key = pop();
@@ -68,4 +68,5 @@ char pop(void) {
 
     return data;
 }
+
 
