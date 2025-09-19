@@ -3,11 +3,11 @@
 #include <string.h>
 #include <time.h>
 
-struct trump {
+typedef struct trump {
     int order;
     char shape[3];
     int number;
-};
+} trump;
 
 void make_card(trump m_card[]);
 void shuffle_card(trump m_card[]);
@@ -84,3 +84,4 @@ void display_card(trump m_card[]) {
         }
     }
 }
+
