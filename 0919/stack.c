@@ -23,11 +23,12 @@ int main(void) {
         key = getch();
         printf("%c\n", key);
 
-        push(key);
+        if (key != 27)  // ESC 키 입력은 스택에 추가 안 함
+            push(key);
 
-    } while (key != 27);  // ESC 키 입력 시 종료
+    } while (key != 27);
 
-    printf("\n\n데이터 pop과정\n\n");
+    printf("\n\nData pop process\n\n");
 
     while (top != NULL) {
         key = pop();
@@ -37,6 +38,7 @@ int main(void) {
 
     return 0;
 }
+
 
 void push(char data) {
     struct stack_node *new_node;
@@ -66,3 +68,4 @@ char pop(void) {
 
     return data;
 }
+
