@@ -105,19 +105,24 @@ void drawFieldWithBorders() {
 
 }
 
-int doesCollide(int nx, int ny, int nr) {
+int doesCollide(int x, int y, int rotation) {
     for (int py = 0; py < 4; py++) {
         for (int px = 0; px < 4; px++) {
-            if (tetromino[currentBlock][nr][py][px]) {
-                int fx = nx + px;
-                int fy = ny + py;
-                if (fx < 0 || fx >= WIDTH || fy >= HEIGHT || (fy >= 0 && field[fy][fx]))
-                    return 1;
+            if (tetromino[currentBlock][rotation][py][px]) {
+                int fx = x + px;
+                int fy = y + py;
+
+                // 필드 밖으로 나가면 충돌
+                if (fx < 0 || fx >= WIDTH || fy >= HEIGHT) return 1;
+
+                // 필드에 쌓인 블록과 겹치면 충돌
+                if (fy >= 0 && field[fy][fx]) return 1;
             }
         }
     }
     return 0;
 }
+
 
 void mergeBlock() {
     for (int py = 0; py < 4; py++) {
@@ -152,16 +157,6 @@ void clearLines() {
             for (int x = 0; x < WIDTH; x++)
                 field[0][x] = 0;
         }
-    }
-}
-
-void newBlock() {
-    currentBlock = rand() % 7;
-    currentRotation = 0;
-    currentX = 3;
-    currentY = 0;
-    if (doesCollide(currentX, currentY, currentRotation)) {
-        gameOver = 1;
     }
 }
 
@@ -241,6 +236,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
