@@ -112,16 +112,23 @@ int doesCollide(int x, int y, int rotation) {
                 int fx = x + px;
                 int fy = y + py;
 
-                // 필드 밖으로 나가면 충돌
-                if (fx < 0 || fx >= WIDTH || fy >= HEIGHT) return 1;
+                // 좌우 밖으로 나가면 충돌
+                if (fx < 0 || fx >= WIDTH) return 1;
 
-                // 필드에 쌓인 블록과 겹치면 충돌
-                if (fy >= 0 && field[fy][fx]) return 1;
+                // 아래쪽 밖으로 나가면 충돌
+                if (fy >= HEIGHT) return 1;
+
+                // 위쪽 (음수 y) 영역에 있으면 충돌로 처리
+                if (fy < 0) return 1;
+
+                // 이미 쌓인 블록과 겹치면 충돌
+                if (field[fy][fx]) return 1;
             }
         }
     }
     return 0;
 }
+
 
 
 void mergeBlock() {
@@ -236,6 +243,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
