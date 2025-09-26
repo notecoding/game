@@ -180,7 +180,7 @@ void input() {
 
         else if (key == 'q' || key == 'Q') {
             system("cls");
-            drawFieldWithBorders(); // 현재 게임 화면 출력
+            drawField(); // 현재 게임 화면 출력
             printf("\n👋 게임이 종료되었습니다.\n");
             printf("최종 점수: %d\n", score);
             exit(0); // 종료
@@ -225,3 +225,4 @@ while (1) {
 
     return 0;
 }
+
