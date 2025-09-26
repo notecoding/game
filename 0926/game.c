@@ -58,31 +58,33 @@ int tetromino[7][4][4][4] = {
 int currentBlock, currentRotation = 0;
 int currentX = 3, currentY = 0;
 
-void drawFieldWithBorders() {
+void draw() {
     system("cls");
     printf("Score: %d\n", score);
 
-    // 상단 구분선
-    printf("+");
-    for (int i = 0; i < WIDTH * 2; i++) printf("-");
-    printf("+\n");
-
-    // 필드 본체
     for (int y = 0; y < HEIGHT; y++) {
-        printf("|");
         for (int x = 0; x < WIDTH; x++) {
             if (field[y][x])
-                printf("[]"); // 블록
+                printf("[]");
             else
-                printf("  "); // 빈칸
+                printf("  ");
         }
-        printf("|\n");
+        printf("\n");
     }
 
-    // 하단 구분선
-    printf("+");
-    for (int i = 0; i < WIDTH * 2; i++) printf("-");
-    printf("+\n");
+    for (int py = 0; py < 4; py++) {
+        for (int px = 0; px < 4; px++) {
+            if (tetromino[currentBlock][currentRotation][py][px]) {
+                int fx = currentX + px;
+                int fy = currentY + py;
+                if (fy >= 0 && fy < HEIGHT && fx >= 0 && fx < WIDTH) {
+                    COORD pos = { fx * 2, fy + 1 };
+                    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+                    printf("[]");
+                }
+            }
+        }
+    }
 }
 
 int doesCollide(int nx, int ny, int nr) {
@@ -178,4 +180,3 @@ int main() {
     system("pause");
     return 0;
 }
-
