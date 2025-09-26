@@ -100,6 +100,9 @@ void drawFieldWithBorders() {
     printf("+");
     for (int i = 0; i < WIDTH * 2; i++) printf("-");
     printf("+\n");
+
+    printf("\n조작키: ← a | → d | ↓ s | 회전 w | 리셋 r | 종료 q\n");
+
 }
 
 int doesCollide(int nx, int ny, int nr) {
@@ -162,6 +165,29 @@ void newBlock() {
     }
 }
 
+void newBlock() {
+    currentBlock = rand() % 7;
+    currentRotation = 0;
+    currentX = WIDTH / 2 - 2;
+    currentY = 0;
+
+    // 생성된 블록이 시작 위치에서 이미 충돌하면 게임오버!
+    if (doesCollide(currentX, currentY, currentRotation)) {
+        gameOver = 1;
+    }
+}
+
+
+void resetGame() {
+    memset(field, 0, sizeof(field));
+    score = 0;
+    currentBlock = rand() % 7;
+    currentRotation = 0;
+    currentX = 3;
+    currentY = 0;
+    gameOver = 0;
+}
+
 void input() {
     if (_kbhit()) {
         char key = _getch();
@@ -184,16 +210,6 @@ void input() {
     }
 }
 
-void resetGame() {
-    memset(field, 0, sizeof(field));
-    score = 0;
-    currentBlock = rand() % 7;
-    currentRotation = 0;
-    currentX = 3;
-    currentY = 0;
-    gameOver = 0;
-}
-
 
 int main() {
     srand(time(NULL));
@@ -207,7 +223,10 @@ int main() {
         if (gameOver) {
             system("cls");
             drawFieldWithBorders();
-            printf("\n💀 게임 오버! [r] 다시 시작, [q] 종료 💀\n");
+            printf("\n💀 게임 오버! 💀\n");
+            printf("점수: %d\n", score);
+            printf("\n다시 시작하려면 [r], 종료하려면 [q]를 누르세요\n");
+
             continue; // 게임 멈춤, 키 입력만 대기
         }
 
@@ -222,6 +241,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
