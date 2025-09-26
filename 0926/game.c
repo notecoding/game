@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
@@ -7,62 +8,56 @@
 #define WIDTH 10
 #define HEIGHT 20
 
-int field[HEIGHT][WIDTH] = {0};
+int field[HEIGHT][WIDTH];
 int score = 0;
 int gameOver = 0;
 
 int tetromino[7][4][4][4] = {
-    // I
     {{{0,0,0,0},{1,1,1,1},{0,0,0,0},{0,0,0,0}},
      {{0,0,1,0},{0,0,1,0},{0,0,1,0},{0,0,1,0}},
      {{0,0,0,0},{0,0,0,0},{1,1,1,1},{0,0,0,0}},
      {{0,1,0,0},{0,1,0,0},{0,1,0,0},{0,1,0,0}}},
 
-    // O
     {{{0,0,0,0},{0,1,1,0},{0,1,1,0},{0,0,0,0}},
      {{0,0,0,0},{0,1,1,0},{0,1,1,0},{0,0,0,0}},
      {{0,0,0,0},{0,1,1,0},{0,1,1,0},{0,0,0,0}},
      {{0,0,0,0},{0,1,1,0},{0,1,1,0},{0,0,0,0}}},
 
-    // T
     {{{0,0,0,0},{1,1,1,0},{0,1,0,0},{0,0,0,0}},
      {{0,1,0,0},{1,1,0,0},{0,1,0,0},{0,0,0,0}},
      {{0,1,0,0},{1,1,1,0},{0,0,0,0},{0,0,0,0}},
      {{0,1,0,0},{0,1,1,0},{0,1,0,0},{0,0,0,0}}},
 
-    // S
     {{{0,0,0,0},{0,1,1,0},{1,1,0,0},{0,0,0,0}},
      {{1,0,0,0},{1,1,0,0},{0,1,0,0},{0,0,0,0}},
      {{0,0,0,0},{0,1,1,0},{1,1,0,0},{0,0,0,0}},
      {{1,0,0,0},{1,1,0,0},{0,1,0,0},{0,0,0,0}}},
 
-    // Z
     {{{0,0,0,0},{1,1,0,0},{0,1,1,0},{0,0,0,0}},
      {{0,1,0,0},{1,1,0,0},{1,0,0,0},{0,0,0,0}},
      {{0,0,0,0},{1,1,0,0},{0,1,1,0},{0,0,0,0}},
      {{0,1,0,0},{1,1,0,0},{1,0,0,0},{0,0,0,0}}},
 
-    // J
     {{{0,0,0,0},{1,1,1,0},{0,0,1,0},{0,0,0,0}},
      {{0,1,0,0},{0,1,0,0},{1,1,0,0},{0,0,0,0}},
      {{1,0,0,0},{1,1,1,0},{0,0,0,0},{0,0,0,0}},
      {{0,1,1,0},{0,1,0,0},{0,1,0,0},{0,0,0,0}}},
 
-    // L
     {{{0,0,0,0},{1,1,1,0},{1,0,0,0},{0,0,0,0}},
      {{1,1,0,0},{0,1,0,0},{0,1,0,0},{0,0,0,0}},
      {{0,0,1,0},{1,1,1,0},{0,0,0,0},{0,0,0,0}},
      {{0,1,0,0},{0,1,0,0},{0,1,1,0},{0,0,0,0}}}
 };
 
-int currentBlock, currentRotation = 0;
-int currentX = 3, currentY = 0;
+int currentBlock;
+int currentRotation;
+int currentX;
+int currentY;
 
-void drawFieldWithBorders() {
+void drawField() {
     system("cls");
     printf("Score: %d\n", score);
 
-    // 상단 구분선
     printf("+");
     for (int i = 0; i < WIDTH * 2; i++) printf("-");
     printf("+\n");
@@ -70,39 +65,33 @@ void drawFieldWithBorders() {
     for (int y = 0; y < HEIGHT; y++) {
         printf("|");
         for (int x = 0; x < WIDTH; x++) {
-            int isCurrentBlock = 0;
+            int isBlock = 0;
 
-            // 현재 떨어지는 블록을 field 위에 그리기
+            // 현재 블록 표시
             for (int py = 0; py < 4; py++) {
                 for (int px = 0; px < 4; px++) {
                     if (tetromino[currentBlock][currentRotation][py][px]) {
                         int fx = currentX + px;
                         int fy = currentY + py;
                         if (fx == x && fy == y) {
-                            isCurrentBlock = 1;
+                            isBlock = 1;
                         }
                     }
                 }
             }
 
-            if (isCurrentBlock) {
-                printf("[]"); // 현재 블록
-            } else if (field[y][x]) {
-                printf("[]"); // 쌓인 블록
-            } else {
-                printf("  "); // 빈칸
-            }
+            if (isBlock) printf("[]");
+            else if (field[y][x]) printf("[]");
+            else printf("  ");
         }
         printf("|\n");
     }
 
-    // 하단 구분선
     printf("+");
     for (int i = 0; i < WIDTH * 2; i++) printf("-");
     printf("+\n");
 
-    printf("\n조작키: ← a | → d | ↓ s | 회전 w | 리셋 r | 종료 q\n");
-
+    printf("Controls: a:left d:right s:down w:rotate r:reset q:quit\n");
 }
 
 int doesCollide(int x, int y, int rotation) {
@@ -112,24 +101,16 @@ int doesCollide(int x, int y, int rotation) {
                 int fx = x + px;
                 int fy = y + py;
 
-                // 좌우 밖으로 나가면 충돌
                 if (fx < 0 || fx >= WIDTH) return 1;
-
-                // 아래쪽 밖으로 나가면 충돌
                 if (fy >= HEIGHT) return 1;
 
-                // 위쪽 (음수 y) 영역에 있으면 충돌로 처리
-                if (fy < 0) return 1;
-
-                // 이미 쌓인 블록과 겹치면 충돌
-                if (field[fy][fx]) return 1;
+                // **여기서 fy < 0 일 때는 충돌 아님 (위쪽 공간)**
+                if (fy >= 0 && field[fy][fx]) return 1;
             }
         }
     }
     return 0;
 }
-
-
 
 void mergeBlock() {
     for (int py = 0; py < 4; py++) {
@@ -137,8 +118,9 @@ void mergeBlock() {
             if (tetromino[currentBlock][currentRotation][py][px]) {
                 int fx = currentX + px;
                 int fy = currentY + py;
-                if (fy >= 0 && fy < HEIGHT && fx >= 0 && fx < WIDTH)
+                if (fy >= 0 && fy < HEIGHT && fx >= 0 && fx < WIDTH) {
                     field[fy][fx] = 1;
+                }
             }
         }
     }
@@ -148,21 +130,17 @@ void clearLines() {
     for (int y = 0; y < HEIGHT; y++) {
         int full = 1;
         for (int x = 0; x < WIDTH; x++) {
-            if (field[y][x] == 0) {
+            if (!field[y][x]) {
                 full = 0;
                 break;
             }
         }
-
         if (full) {
             score += 100;
             for (int ty = y; ty > 0; ty--) {
-                for (int x = 0; x < WIDTH; x++) {
-                    field[ty][x] = field[ty - 1][x];
-                }
+                memcpy(field[ty], field[ty-1], sizeof(field[ty]));
             }
-            for (int x = 0; x < WIDTH; x++)
-                field[0][x] = 0;
+            memset(field[0], 0, sizeof(field[0]));
         }
     }
 }
@@ -173,64 +151,58 @@ void newBlock() {
     currentX = WIDTH / 2 - 2;
     currentY = 0;
 
-    // 생성된 블록이 시작 위치에서 이미 충돌하면 게임오버!
+    // 게임오버 판단: 새 블록이 시작 위치에 놓일 수 없으면 종료
     if (doesCollide(currentX, currentY, currentRotation)) {
         gameOver = 1;
     }
 }
 
-
 void resetGame() {
     memset(field, 0, sizeof(field));
     score = 0;
-    currentBlock = rand() % 7;
-    currentRotation = 0;
-    currentX = 3;
-    currentY = 0;
     gameOver = 0;
+    newBlock();
 }
 
 void input() {
     if (_kbhit()) {
-        char key = _getch();
-
-        if (key == 'a' && !doesCollide(currentX - 1, currentY, currentRotation)) currentX--;
-        if (key == 'd' && !doesCollide(currentX + 1, currentY, currentRotation)) currentX++;
-        if (key == 's' && !doesCollide(currentX, currentY + 1, currentRotation)) currentY++;
-        if (key == 'w' && !doesCollide(currentX, currentY, (currentRotation + 1) % 4))
-            currentRotation = (currentRotation + 1) % 4;
-
-        if (key == 'r' || key == 'R') {
-            resetGame();
+        char ch = _getch();
+        if (gameOver) {
+            if (ch == 'r' || ch == 'R') {
+                resetGame();
+            }
+            if (ch == 'q' || ch == 'Q') {
+                exit(0);
+            }
+            return;
         }
 
-        if (key == 'q' || key == 'Q') {
-            system("cls");
-            printf("👋 게임을 종료합니다.\n");
-            exit(0);
-        }
+        if (ch == 'a' && !doesCollide(currentX - 1, currentY, currentRotation)) currentX--;
+        else if (ch == 'd' && !doesCollide(currentX + 1, currentY, currentRotation)) currentX++;
+        else if (ch == 's' && !doesCollide(currentX, currentY + 1, currentRotation)) currentY++;
+        else if (ch == 'w' && !doesCollide(currentX, currentY, (currentRotation + 1) % 4)) currentRotation = (currentRotation + 1) % 4;
+
+        if (ch == 'r' || ch == 'R') resetGame();
+        if (ch == 'q' || ch == 'Q') exit(0);
     }
 }
-
 
 int main() {
     srand(time(NULL));
     resetGame();
 
     while (1) {
-        drawFieldWithBorders();
-        Sleep(200);
-        input();
+        drawField();
 
         if (gameOver) {
-            system("cls");
-            drawFieldWithBorders();
-            printf("\n💀 게임 오버! 💀\n");
-            printf("점수: %d\n", score);
-            printf("\n다시 시작하려면 [r], 종료하려면 [q]를 누르세요\n");
-
-            continue; // 게임 멈춤, 키 입력만 대기
+            printf("\n=== GAME OVER ===\n");
+            printf("Press R to restart, Q to quit.\n");
+            Sleep(100);
+            input();
+            continue;
         }
+
+        Sleep(200);
 
         if (!doesCollide(currentX, currentY + 1, currentRotation)) {
             currentY++;
@@ -239,13 +211,8 @@ int main() {
             clearLines();
             newBlock();
         }
-    }
 
+        input();
+    }
     return 0;
 }
-
-
-
-
-
-
