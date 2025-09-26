@@ -58,33 +58,48 @@ int tetromino[7][4][4][4] = {
 int currentBlock, currentRotation = 0;
 int currentX = 3, currentY = 0;
 
-void draw() {
+void drawFieldWithBorders() {
     system("cls");
     printf("Score: %d\n", score);
 
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            if (field[y][x])
-                printf("[]");
-            else
-                printf("  ");
-        }
-        printf("\n");
-    }
+    // 상단 구분선
+    printf("+");
+    for (int i = 0; i < WIDTH * 2; i++) printf("-");
+    printf("+\n");
 
-    for (int py = 0; py < 4; py++) {
-        for (int px = 0; px < 4; px++) {
-            if (tetromino[currentBlock][currentRotation][py][px]) {
-                int fx = currentX + px;
-                int fy = currentY + py;
-                if (fy >= 0 && fy < HEIGHT && fx >= 0 && fx < WIDTH) {
-                    COORD pos = { fx * 2, fy + 1 };
-                    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-                    printf("[]");
+    for (int y = 0; y < HEIGHT; y++) {
+        printf("|");
+        for (int x = 0; x < WIDTH; x++) {
+            int isCurrentBlock = 0;
+
+            // 현재 떨어지는 블록을 field 위에 그리기
+            for (int py = 0; py < 4; py++) {
+                for (int px = 0; px < 4; px++) {
+                    if (tetromino[currentBlock][currentRotation][py][px]) {
+                        int fx = currentX + px;
+                        int fy = currentY + py;
+                        if (fx == x && fy == y) {
+                            isCurrentBlock = 1;
+                        }
+                    }
                 }
             }
+
+            if (isCurrentBlock) {
+                printf("[]"); // 현재 블록
+            } else if (field[y][x]) {
+                printf("[]"); // 쌓인 블록
+            } else {
+                printf("  "); // 빈칸
+            }
         }
+        printf("|\n");
     }
+
+    // 하단 구분선
+    printf("+");
+    for (int i = 0; i < WIDTH * 2; i++) printf("-");
+    printf("+\n");
 }
 
 int doesCollide(int nx, int ny, int nr) {
@@ -162,7 +177,7 @@ int main() {
     srand(time(NULL));
     newBlock();
     while (!gameOver) {
-        draw();
+        drawFieldWithBorders();
         Sleep(200);  // 속도 조절
         input();
 
@@ -180,3 +195,4 @@ int main() {
     system("pause");
     return 0;
 }
+
