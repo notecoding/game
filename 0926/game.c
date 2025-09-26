@@ -165,21 +165,51 @@ void newBlock() {
 void input() {
     if (_kbhit()) {
         char key = _getch();
+
         if (key == 'a' && !doesCollide(currentX - 1, currentY, currentRotation)) currentX--;
         if (key == 'd' && !doesCollide(currentX + 1, currentY, currentRotation)) currentX++;
         if (key == 's' && !doesCollide(currentX, currentY + 1, currentRotation)) currentY++;
         if (key == 'w' && !doesCollide(currentX, currentY, (currentRotation + 1) % 4))
             currentRotation = (currentRotation + 1) % 4;
+
+        if (key == 'r' || key == 'R') {
+            resetGame();
+        }
+
+        if (key == 'q' || key == 'Q') {
+            system("cls");
+            printf("👋 게임을 종료합니다.\n");
+            exit(0);
+        }
     }
 }
 
+void resetGame() {
+    memset(field, 0, sizeof(field));
+    score = 0;
+    currentBlock = rand() % 7;
+    currentRotation = 0;
+    currentX = 3;
+    currentY = 0;
+    gameOver = 0;
+}
+
+
 int main() {
     srand(time(NULL));
-    newBlock();
-    while (!gameOver) {
+    resetGame();
+
+    while (1) {
         drawFieldWithBorders();
-        Sleep(200);  // 속도 조절
+        Sleep(200);
         input();
+
+        if (gameOver) {
+            system("cls");
+            drawFieldWithBorders();
+            printf("\n💀 게임 오버! [r] 다시 시작, [q] 종료 💀\n");
+            continue; // 게임 멈춤, 키 입력만 대기
+        }
 
         if (!doesCollide(currentX, currentY + 1, currentRotation)) {
             currentY++;
@@ -190,9 +220,8 @@ int main() {
         }
     }
 
-    system("cls");
-    printf("\n\nGame Over!\nFinal Score: %d\n", score);
-    system("pause");
     return 0;
 }
+
+
 
