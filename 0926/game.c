@@ -191,18 +191,11 @@ int main() {
     srand(time(NULL));
     resetGame();
 
-    while (1) {
-        drawField();
+int gameOverDrawn = 0;
 
-        if (gameOver) {
-            printf("\n=== GAME OVER ===\n");
-            printf("Press R to restart, Q to quit.\n");
-            Sleep(100);
-            input();
-            continue;
-        }
-
-        Sleep(200);
+while (1) {
+    if (!gameOver) {
+        drawFieldWithBorders();
 
         if (!doesCollide(currentX, currentY + 1, currentRotation)) {
             currentY++;
@@ -212,7 +205,23 @@ int main() {
             newBlock();
         }
 
+        Sleep(200);
         input();
+        gameOverDrawn = 0; // 게임 중이라면 다시 초기화
+    } else {
+        if (!gameOverDrawn) {
+            drawFieldWithBorders();
+            printf("\n💀 게임 오버! 💀\n");
+            printf("점수: %d\n", score);
+            printf("다시 시작하려면 [r], 종료하려면 [q]를 누르세요\n");
+            gameOverDrawn = 1;
+        }
+
+        input();
+        Sleep(100);
     }
+}
+
     return 0;
 }
+
