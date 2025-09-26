@@ -166,24 +166,25 @@ void resetGame() {
 
 void input() {
     if (_kbhit()) {
-        char ch = _getch();
-        if (gameOver) {
-            if (ch == 'r' || ch == 'R') {
-                resetGame();
-            }
-            if (ch == 'q' || ch == 'Q') {
-                exit(0);
-            }
-            return;
+        char key = _getch();
+
+        if (key == 'a' && !doesCollide(currentX - 1, currentY, currentRotation)) currentX--;
+        else if (key == 'd' && !doesCollide(currentX + 1, currentY, currentRotation)) currentX++;
+        else if (key == 's' && !doesCollide(currentX, currentY + 1, currentRotation)) currentY++;
+        else if (key == 'w' && !doesCollide(currentX, currentY, (currentRotation + 1) % 4))
+            currentRotation = (currentRotation + 1) % 4;
+
+        else if (key == 'r' || key == 'R') {
+            resetGame();
         }
 
-        if (ch == 'a' && !doesCollide(currentX - 1, currentY, currentRotation)) currentX--;
-        else if (ch == 'd' && !doesCollide(currentX + 1, currentY, currentRotation)) currentX++;
-        else if (ch == 's' && !doesCollide(currentX, currentY + 1, currentRotation)) currentY++;
-        else if (ch == 'w' && !doesCollide(currentX, currentY, (currentRotation + 1) % 4)) currentRotation = (currentRotation + 1) % 4;
-
-        if (ch == 'r' || ch == 'R') resetGame();
-        if (ch == 'q' || ch == 'Q') exit(0);
+        else if (key == 'q' || key == 'Q') {
+            system("cls");
+            drawFieldWithBorders(); // 현재 게임 화면 출력
+            printf("\n👋 게임이 종료되었습니다.\n");
+            printf("최종 점수: %d\n", score);
+            exit(0); // 종료
+        }
     }
 }
 
