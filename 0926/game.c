@@ -33,65 +33,7 @@ int tetromino[7][4][4][4] = {
      {{0,0,0,0},{0,1,1,0},{1,1,0,0},{0,0,0,0}},
      {{1,0,0,0},{1,1,0,0},{0,1,0,0},{0,0,0,0}}},
 
-    {{{0,0,0,0},{1,1,0,0},{0,1,1,0},{0,0,0,0}},
-     {{0,1,0,0},{1,1,0,0},{1,0,0,0},{0,0,0,0}},
-     {{0,0,0,0},{1,1,0,0},{0,1,1,0},{0,0,0,0}},
-     {{0,1,0,0},{1,1,0,0},{1,0,0,0},{0,0,0,0}}},
-
-    {{{0,0,0,0},{1,1,1,0},{0,0,1,0},{0,0,0,0}},
-     {{0,1,0,0},{0,1,0,0},{1,1,0,0},{0,0,0,0}},
-     {{1,0,0,0},{1,1,1,0},{0,0,0,0},{0,0,0,0}},
-     {{0,1,1,0},{0,1,0,0},{0,1,0,0},{0,0,0,0}}},
-
-    {{{0,0,0,0},{1,1,1,0},{1,0,0,0},{0,0,0,0}},
-     {{1,1,0,0},{0,1,0,0},{0,1,0,0},{0,0,0,0}},
-     {{0,0,1,0},{1,1,1,0},{0,0,0,0},{0,0,0,0}},
-     {{0,1,0,0},{0,1,0,0},{0,1,1,0},{0,0,0,0}}}
-};
-
-int currentBlock;
-int currentRotation;
-int currentX;
-int currentY;
-
-void drawField() {
-    system("cls");
-    printf("Score: %d\n", score);
-
-    printf("+");
-    for (int i = 0; i < WIDTH * 2; i++) printf("-");
-    printf("+\n");
-
-    for (int y = 0; y < HEIGHT; y++) {
-        printf("|");
-        for (int x = 0; x < WIDTH; x++) {
-            int isBlock = 0;
-
-            // 현재 블록 표시
-            for (int py = 0; py < 4; py++) {
-                for (int px = 0; px < 4; px++) {
-                    if (tetromino[currentBlock][currentRotation][py][px]) {
-                        int fx = currentX + px;
-                        int fy = currentY + py;
-                        if (fx == x && fy == y) {
-                            isBlock = 1;
-                        }
-                    }
-                }
-            }
-
-            if (isBlock) printf("[]");
-            else if (field[y][x]) printf("[]");
-            else printf("  ");
-        }
-        printf("|\n");
-    }
-
-    printf("+");
-    for (int i = 0; i < WIDTH * 2; i++) printf("-");
-    printf("+\n");
-
-    printf("Controls: a:left d:right s:down w:rotate r:reset q:quit\n");
+    {{{0,0,0,0},{1,1,0,0},{0,1,1,0료\n");
 }
 
 int doesCollide(int x, int y, int rotation) {
@@ -114,65 +56,7 @@ int doesCollide(int x, int y, int rotation) {
 
 void mergeBlock() {
     for (int py = 0; py < 4; py++) {
-        for (int px = 0; px < 4; px++) {
-            if (tetromino[currentBlock][currentRotation][py][px]) {
-                int fx = currentX + px;
-                int fy = currentY + py;
-                if (fy >= 0 && fy < HEIGHT && fx >= 0 && fx < WIDTH) {
-                    field[fy][fx] = 1;
-                }
-            }
-        }
-    }
-}
-
-void clearLines() {
-    for (int y = 0; y < HEIGHT; y++) {
-        int full = 1;
-        for (int x = 0; x < WIDTH; x++) {
-            if (!field[y][x]) {
-                full = 0;
-                break;
-            }
-        }
-        if (full) {
-            score += 100;
-            for (int ty = y; ty > 0; ty--) {
-                memcpy(field[ty], field[ty-1], sizeof(field[ty]));
-            }
-            memset(field[0], 0, sizeof(field[0]));
-        }
-    }
-}
-
-void newBlock() {
-    currentBlock = rand() % 7;
-    currentRotation = 0;
-    currentX = WIDTH / 2 - 2;
-    currentY = 0;
-
-    // 게임오버 판단: 새 블록이 시작 위치에 놓일 수 없으면 종료
-    if (doesCollide(currentX, currentY, currentRotation)) {
-        gameOver = 1;
-    }
-}
-
-void resetGame() {
-    memset(field, 0, sizeof(field));
-    score = 0;
-    gameOver = 0;
-    newBlock();
-}
-
-void input() {
-    if (_kbhit()) {
-        char ch = _getch();
-        if (gameOver) {
-            if (ch == 'r' || ch == 'R') {
-                resetGame();
-            }
-            if (ch == 'q' || ch == 'Q') {
-                exit(0);
+        for 다");
             }
             return;
         }
@@ -224,4 +108,5 @@ while (1) {
 
     return 0;
 }
+
 
