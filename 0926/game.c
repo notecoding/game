@@ -195,7 +195,7 @@ int main() {
 
 while (1) {
     if (!gameOver) {
-        drawFieldWithBorders();
+        drawField();
 
         if (!doesCollide(currentX, currentY + 1, currentRotation)) {
             currentY++;
@@ -210,7 +210,7 @@ while (1) {
         gameOverDrawn = 0; // 게임 중이라면 다시 초기화
     } else {
         if (!gameOverDrawn) {
-            drawFieldWithBorders();
+            drawField();
             printf("\n💀 게임 오버! 💀\n");
             printf("점수: %d\n", score);
             printf("다시 시작하려면 [r], 종료하려면 [q]를 누르세요\n");
