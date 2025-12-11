@@ -1,1 +1,1 @@
-game
+cGameUpgrade파일로 대체
